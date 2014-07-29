@@ -35,45 +35,64 @@
             <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
                 <p class="event received">Device is Ready</p>
+                <button id="openCamera">Camara</button>
             </div>
         </div>
+        <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             //app.initialize();
+            $( document ).ready(function() {
+                console.log( "ready!" );
+                window.onload = function(){
+                    document.addEventListener("deviceready",init,false);
+                    //init();
+                }
+                geolocationOptions = { maximumAge: 3000, timeout: 30000, enableHighAccuracy: false };
+                function init(){
+                    navigator.geolocation.getCurrentPosition(geolocationSuccess,
+                                            geolocationError,
+                                            geolocationOptions);     
+                    $("#openCamera").click(function(){
+                        navigator.camera.getPicture(onCameraSuccess, onCameraFail, { quality: 50,
+                            destinationType: Camera.DestinationType.FILE_URI });
 
-            window.onload = function(){
-                document.addEventListener("deviceready",init,false);
-                //init();
-            }
-            geolocationOptions = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
-            function init(){
-                navigator.geolocation.getCurrentPosition(geolocationSuccess,
-                                        geolocationError,
-                                        geolocationOptions);                
-            }
+                        function onCameraSuccess(imageURI) {
+                            var image = document.getElementById('myImage');
+                            image.src = imageURI;
+                        }
 
-            // onSuccess Callback
-            // This method accepts a Position object, which contains the
-            // current GPS coordinates
-            //
-            function geolocationSuccess (position) {
-                alert('Latitude: '          + position.coords.latitude          + '\n' +
-                      'Longitude: '         + position.coords.longitude         + '\n' +
-                      'Altitude: '          + position.coords.altitude          + '\n' +
-                      'Accuracy: '          + position.coords.accuracy          + '\n' +
-                      'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-                      'Heading: '           + position.coords.heading           + '\n' +
-                      'Speed: '             + position.coords.speed             + '\n' +
-                      'Timestamp: '         + position.timestamp                + '\n');
-            };
+                        function onCameraFail(message) {
+                            alert('Failed because: ' + message);
+                        }
+                    });           
+                }
 
-            // onError Callback receives a PositionError object
-            //
-            function geolocationError(error) {
-                alert('code: '    + error.code    + '\n' +
-                      'message: ' + error.message + '\n');
-            }
+                // onSuccess Callback
+                // This method accepts a Position object, which contains the
+                // current GPS coordinates
+                //
+                function geolocationSuccess (position) {
+                    alert('Latitude: '          + position.coords.latitude          + '\n' +
+                          'Longitude: '         + position.coords.longitude         + '\n' +
+                          'Altitude: '          + position.coords.altitude          + '\n' +
+                          'Accuracy: '          + position.coords.accuracy          + '\n' +
+                          'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+                          'Heading: '           + position.coords.heading           + '\n' +
+                          'Speed: '             + position.coords.speed             + '\n' +
+                          'Timestamp: '         + position.timestamp                + '\n');
+                };
+
+                // onError Callback receives a PositionError object
+                //
+                function geolocationError(error) {
+                    alert('code: '    + error.code    + '\n' +
+                          'message: ' + error.message + '\n');
+                }
+            });
+
+                
 
            
 
